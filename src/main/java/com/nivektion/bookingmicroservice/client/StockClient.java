@@ -1,11 +1,11 @@
 package com.nivektion.bookingmicroservice.client;
 
-import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-@FeignClient(name="stock-microservice")
+//@FeignClient("stock-microservice")
 public interface StockClient {
-  @RequestMapping("/api/stock/{code}")
-  boolean stockAvailable(@PathVariable String code);
+  @RequestMapping(value = "/api/stock/{code}", method = RequestMethod.GET)
+  boolean stockAvailable(@PathVariable("code") String code);
 }

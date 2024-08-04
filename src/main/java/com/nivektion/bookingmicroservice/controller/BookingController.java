@@ -1,6 +1,5 @@
 package com.nivektion.bookingmicroservice.controller;
 
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.nivektion.bookingmicroservice.client.StockClient;
 import com.nivektion.bookingmicroservice.dto.OrderDTO;
 import com.nivektion.bookingmicroservice.entity.OrderEntity;
@@ -15,19 +14,21 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/booking")
 public class BookingController {
-  private OrderRepository orderRepository;
-  private StockClient stockClient;
+  private final OrderRepository orderRepository;
+//  private final StockClient stockClient;
 
   @Autowired
-  public BookingController(OrderRepository orderRepository, StockClient stockClient) {
+  public BookingController(OrderRepository orderRepository) {
     this.orderRepository = orderRepository;
-    this.stockClient = stockClient;
+//    this.stockClient = stockClient;
   }
 
   @PostMapping("/order")
-  @HystrixCommand(fallbackMethod = "fallbackStockService")
+//  @HystrixCommand(fallbackMethod = "fallbackStockService")
   public String saveOrder(@RequestBody OrderDTO orderDTO) {
-    boolean inStock = orderDTO.getOrderItems().stream().allMatch(orderItemEntity -> stockClient.stockAvailable(orderItemEntity.getCode()));
+    boolean inStock = true;
+//    boolean inStock = orderDTO.getOrderItems().stream()
+//        .allMatch(orderItemEntity -> stockClient.stockAvailable(orderItemEntity.getCode()));
     if (inStock) {
       OrderEntity orderEntity = new OrderEntity();
       orderEntity.setOrderNumber(UUID.randomUUID().toString());
@@ -38,7 +39,7 @@ public class BookingController {
     return "Order cannot be saved";
   }
 
-  private String fallbackStockService() {
+  private String fallbackStockService(OrderDTO orderDTO) {
     return "Something went wrong, try after sometime";
   }
 }
